@@ -234,7 +234,7 @@ Proyek ini dibuat untuk keperluan tugas mata kuliah Rekayasa Perangkat Lunak.
 
 **Muhammad Rizal Nurfirdaus**  
 NIM: 20230810088  
-Universitas Dinamika Surabaya
+Universitas Kuningan
 
 ---
 
