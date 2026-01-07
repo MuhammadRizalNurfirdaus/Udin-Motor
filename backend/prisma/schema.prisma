@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  OWNER
+  CASHIER
+  DRIVER
+  USER
+}
+
+enum TransactionStatus {
+  PENDING
+  PAID
+  PROCESSING
+  DELIVERING
+  DELIVERED
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String?
+  name          String
+  role          Role      @default(USER)
+  googleId      String?   @unique
+  phone         String?
+  address       String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  transactions  Transaction[] @relation("CustomerTransactions")
+  processedTransactions Transaction[] @relation("CashierTransactions")
+  deliveries    Delivery[]
+}
+
+model Motor {
+  id            String    @id @default(uuid())
+  name          String
+  brand         String
+  model         String
+  year          Int
+  price         Float
+  stock         Int       @default(0)
+  image         String?
+  description   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  transactions  Transaction[]
+}
+
+model Transaction {
+  id            String    @id @default(uuid())
+  userId        String
+  motorId       String
+  cashierId     String?
+  quantity      Int       @default(1)
+  totalPrice    Float
+  status        TransactionStatus @default(PENDING)
+  paymentMethod String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user          User      @relation("CustomerTransactions", fields: [userId], references: [id])
+  motor         Motor     @relation(fields: [motorId], references: [id])
+  cashier       User?     @relation("CashierTransactions", fields: [cashierId], references: [id])
+  delivery      Delivery?
+}
+
+model Delivery {
+  id            String    @id @default(uuid())
+  transactionId String    @unique
+  driverId      String
+  address       String
+  status        String    @default("PENDING")
+  notes         String?
+  deliveredAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  driver        User      @relation(fields: [driverId], references: [id])
+}
