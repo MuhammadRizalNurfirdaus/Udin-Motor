@@ -2,8 +2,8 @@ import axios from 'axios';
 
 // Use relative path for production (same origin) or localhost for development
 const isDevelopment = import.meta.env.MODE === 'development';
-const API_URL = isDevelopment ? 'http://localhost:4111/api' : '/api';
-export const API_BASE_URL = isDevelopment ? 'http://localhost:4111' : '';
+const API_URL = isDevelopment ? 'http://localhost:4115/api' : '/api';
+export const API_BASE_URL = isDevelopment ? 'http://localhost:4115' : '';
 
 const api = axios.create({
     baseURL: API_URL,

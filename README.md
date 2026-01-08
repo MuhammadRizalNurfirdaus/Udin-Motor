@@ -146,10 +146,10 @@ npm run dev:all
 
 ## 🚀 Deployment (Production)
 
-Aplikasi ini dikonfigurasi untuk berjalan pada **satu port (4111)** untuk kemudahan deployment dengan Nginx.
+Aplikasi ini dikonfigurasi untuk berjalan pada **satu port (4115)** untuk kemudahan deployment dengan Nginx.
 
 ### 1. Di Server (VPS)
-Pastikan Nginx sudah dikonfigurasi proxy ke port `4111`.
+Pastikan Nginx sudah dikonfigurasi proxy ke port `4115`.
 
 ```bash
 # Clone repository
@@ -161,7 +161,7 @@ cd backend
 npm install
 # Buat .env production
 echo "DATABASE_URL=..." > .env
-echo "PORT=4111" >> .env
+echo "PORT=4115" >> .env
 echo "JWT_SECRET=..." >> .env
 # Setup Database
 npx prisma db push
