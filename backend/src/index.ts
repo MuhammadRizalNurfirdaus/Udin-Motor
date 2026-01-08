@@ -43,6 +43,15 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'OK', message: 'Udin Motor API is running' });
 });
 
+// Serve Frontend Static Files (Production)
+const frontendDist = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendDist));
+
+// Handle SPA routing - send all other requests to index.html
+app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+});
+
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.error(err.stack);

@@ -136,19 +136,52 @@ cd ../frontend
 npm install
 ```
 
-### 4. Jalankan Aplikasi
+### 4. Jalankan Aplikasi (Development)
 Dari root folder:
 ```bash
 npm run dev:all
 ```
 
-Atau jalankan terpisah:
-- Backend: `cd backend && npm run dev`
-- Frontend: `cd frontend && npm run dev`
+---
+
+## 🚀 Deployment (Production)
+
+Aplikasi ini dikonfigurasi untuk berjalan pada **satu port (4111)** untuk kemudahan deployment dengan Nginx.
+
+### 1. Di Server (VPS)
+Pastikan Nginx sudah dikonfigurasi proxy ke port `4111`.
+
+```bash
+# Clone repository
+git clone <repository-url>
+cd "Udin Motor"
+
+# Setup Backend
+cd backend
+npm install
+# Buat .env production
+echo "DATABASE_URL=..." > .env
+echo "PORT=4111" >> .env
+echo "JWT_SECRET=..." >> .env
+# Setup Database
+npx prisma db push
+npx prisma db seed
+
+# Setup Frontend
+cd ../frontend
+npm install
+npm run build  # Ini akan membuat folder dist/
+
+# Jalankan Aplikasi (Start Backend)
+cd ../backend
+npm start      # Gunakan PM2 untuk production: pm2 start src/index.ts --interpreter ts-node
+```
+
+Backend secara otomatis akan menyajikan file frontend dari folder `frontend/dist`.
 
 ### 5. Akses Aplikasi
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:4000
+- **Domain**: https://rizalnurfirdaus.tech (sesuai config Nginx)
+
 
 ---
 

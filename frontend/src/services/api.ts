@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:4000/api';
+// Use relative path for production (same origin) or localhost for development
+const isDevelopment = import.meta.env.MODE === 'development';
+const API_URL = isDevelopment ? 'http://localhost:4111/api' : '/api';
+export const API_BASE_URL = isDevelopment ? 'http://localhost:4111' : '';
 
 const api = axios.create({
     baseURL: API_URL,
@@ -132,6 +135,6 @@ export const uploadAPI = {
     }
 };
 
-export const API_BASE_URL = 'http://localhost:4000';
+
 
 export default api;
