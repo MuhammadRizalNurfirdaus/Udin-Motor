@@ -1,26 +1,29 @@
-import { Response } from 'express';
+import { RequestHandler } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { AuthRequest } from '../middleware/authMiddleware';
+import '../types/express';
 
 const prisma = new PrismaClient();
 
 // Create transaction (User)
-export const createTransaction = async (req: AuthRequest, res: Response) => {
+export const createTransaction: RequestHandler = async (req, res) => {
     try {
         const { motorId, quantity, paymentMethod, address } = req.body;
 
         if (!motorId) {
-            return res.status(400).json({ error: 'Motor ID wajib diisi' });
+            res.status(400).json({ error: 'Motor ID wajib diisi' });
+            return;
         }
 
         const motor = await prisma.motor.findUnique({ where: { id: motorId } });
         if (!motor) {
-            return res.status(404).json({ error: 'Motor tidak ditemukan' });
+            res.status(404).json({ error: 'Motor tidak ditemukan' });
+            return;
         }
 
         const qty = quantity || 1;
         if (motor.stock < qty) {
-            return res.status(400).json({ error: 'Stok motor tidak mencukupi' });
+            res.status(400).json({ error: 'Stok motor tidak mencukupi' });
+            return;
         }
 
         const totalPrice = motor.price * qty;
@@ -54,7 +57,7 @@ export const createTransaction = async (req: AuthRequest, res: Response) => {
 };
 
 // Get my transactions (User)
-export const getMyTransactions = async (req: AuthRequest, res: Response) => {
+export const getMyTransactions: RequestHandler = async (req, res) => {
     try {
         const transactions = await prisma.transaction.findMany({
             where: { userId: req.user!.id },
@@ -73,7 +76,7 @@ export const getMyTransactions = async (req: AuthRequest, res: Response) => {
 };
 
 // Get all transactions (Cashier/Owner)
-export const getAllTransactions = async (req: AuthRequest, res: Response) => {
+export const getAllTransactions: RequestHandler = async (req, res) => {
     try {
         const { status } = req.query;
 
@@ -99,7 +102,7 @@ export const getAllTransactions = async (req: AuthRequest, res: Response) => {
 };
 
 // Get pending transactions (Cashier)
-export const getPendingTransactions = async (req: AuthRequest, res: Response) => {
+export const getPendingTransactions: RequestHandler = async (req, res) => {
     try {
         const transactions = await prisma.transaction.findMany({
             where: { status: 'PENDING' },
@@ -118,19 +121,21 @@ export const getPendingTransactions = async (req: AuthRequest, res: Response) =>
 };
 
 // Process transaction / Confirm payment (Cashier)
-export const processTransaction = async (req: AuthRequest, res: Response) => {
+export const processTransaction: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
 
         const transaction = await prisma.transaction.findUnique({ where: { id } });
         if (!transaction) {
-            return res.status(404).json({ error: 'Transaksi tidak ditemukan' });
+            res.status(404).json({ error: 'Transaksi tidak ditemukan' });
+            return;
         }
 
         const validStatuses = ['PAID', 'PROCESSING', 'CANCELLED'];
         if (!validStatuses.includes(status)) {
-            return res.status(400).json({ error: 'Status tidak valid' });
+            res.status(400).json({ error: 'Status tidak valid' });
+            return;
         }
 
         const updated = await prisma.transaction.update({
@@ -161,12 +166,13 @@ export const processTransaction = async (req: AuthRequest, res: Response) => {
 };
 
 // Assign driver for delivery (Cashier)
-export const assignDelivery = async (req: AuthRequest, res: Response) => {
+export const assignDelivery: RequestHandler = async (req, res) => {
     try {
         const { transactionId, driverId, address } = req.body;
 
         if (!transactionId || !driverId || !address) {
-            return res.status(400).json({ error: 'Transaction ID, Driver ID, dan alamat wajib diisi' });
+            res.status(400).json({ error: 'Transaction ID, Driver ID, dan alamat wajib diisi' });
+            return;
         }
 
         const transaction = await prisma.transaction.findUnique({
@@ -175,16 +181,19 @@ export const assignDelivery = async (req: AuthRequest, res: Response) => {
         });
 
         if (!transaction) {
-            return res.status(404).json({ error: 'Transaksi tidak ditemukan' });
+            res.status(404).json({ error: 'Transaksi tidak ditemukan' });
+            return;
         }
 
         if (transaction.delivery) {
-            return res.status(400).json({ error: 'Transaksi sudah memiliki pengiriman' });
+            res.status(400).json({ error: 'Transaksi sudah memiliki pengiriman' });
+            return;
         }
 
         const driver = await prisma.user.findUnique({ where: { id: driverId } });
         if (!driver || driver.role !== 'DRIVER') {
-            return res.status(400).json({ error: 'Driver tidak ditemukan atau bukan driver' });
+            res.status(400).json({ error: 'Driver tidak ditemukan atau bukan driver' });
+            return;
         }
 
         const delivery = await prisma.delivery.create({
@@ -214,7 +223,7 @@ export const assignDelivery = async (req: AuthRequest, res: Response) => {
 };
 
 // Get transaction stats (Owner)
-export const getTransactionStats = async (req: AuthRequest, res: Response) => {
+export const getTransactionStats: RequestHandler = async (req, res) => {
     try {
         const totalTransactions = await prisma.transaction.count();
         const pendingCount = await prisma.transaction.count({ where: { status: 'PENDING' } });

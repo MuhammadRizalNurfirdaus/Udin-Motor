@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
+import { Request, Response, RequestHandler } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { AuthRequest } from '../middleware/authMiddleware';
+import '../types/express';
 
 const prisma = new PrismaClient();
 
@@ -53,12 +53,13 @@ export const getMotorById = async (req: Request, res: Response) => {
 };
 
 // Create motor (Owner only)
-export const createMotor = async (req: AuthRequest, res: Response) => {
+export const createMotor: RequestHandler = async (req, res) => {
     try {
         const { name, brand, model, year, price, stock, image, description } = req.body;
 
         if (!name || !brand || !model || !year || !price) {
-            return res.status(400).json({ error: 'Nama, brand, model, tahun, dan harga wajib diisi' });
+            res.status(400).json({ error: 'Nama, brand, model, tahun, dan harga wajib diisi' });
+            return;
         }
 
         const motor = await prisma.motor.create({
@@ -82,14 +83,15 @@ export const createMotor = async (req: AuthRequest, res: Response) => {
 };
 
 // Update motor (Owner only)
-export const updateMotor = async (req: AuthRequest, res: Response) => {
+export const updateMotor: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, brand, model, year, price, stock, image, description } = req.body;
 
         const existingMotor = await prisma.motor.findUnique({ where: { id } });
         if (!existingMotor) {
-            return res.status(404).json({ error: 'Motor tidak ditemukan' });
+            res.status(404).json({ error: 'Motor tidak ditemukan' });
+            return;
         }
 
         const motor = await prisma.motor.update({
@@ -114,13 +116,14 @@ export const updateMotor = async (req: AuthRequest, res: Response) => {
 };
 
 // Delete motor (Owner only)
-export const deleteMotor = async (req: AuthRequest, res: Response) => {
+export const deleteMotor: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
 
         const existingMotor = await prisma.motor.findUnique({ where: { id } });
         if (!existingMotor) {
-            return res.status(404).json({ error: 'Motor tidak ditemukan' });
+            res.status(404).json({ error: 'Motor tidak ditemukan' });
+            return;
         }
 
         await prisma.motor.delete({ where: { id } });

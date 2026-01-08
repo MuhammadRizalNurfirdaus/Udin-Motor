@@ -1,11 +1,11 @@
-import { Response } from 'express';
+import { RequestHandler } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { AuthRequest } from '../middleware/authMiddleware';
+import '../types/express';
 
 const prisma = new PrismaClient();
 
 // Get my deliveries (Driver)
-export const getMyDeliveries = async (req: AuthRequest, res: Response) => {
+export const getMyDeliveries: RequestHandler = async (req, res) => {
     try {
         const { status } = req.query;
 
@@ -33,7 +33,7 @@ export const getMyDeliveries = async (req: AuthRequest, res: Response) => {
 };
 
 // Get all deliveries (Owner/Cashier)
-export const getAllDeliveries = async (req: AuthRequest, res: Response) => {
+export const getAllDeliveries: RequestHandler = async (req, res) => {
     try {
         const { status } = req.query;
 
@@ -62,7 +62,7 @@ export const getAllDeliveries = async (req: AuthRequest, res: Response) => {
 };
 
 // Update delivery status (Driver)
-export const updateDeliveryStatus = async (req: AuthRequest, res: Response) => {
+export const updateDeliveryStatus: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
         const { status, notes } = req.body;
@@ -70,16 +70,19 @@ export const updateDeliveryStatus = async (req: AuthRequest, res: Response) => {
         const delivery = await prisma.delivery.findUnique({ where: { id } });
 
         if (!delivery) {
-            return res.status(404).json({ error: 'Pengiriman tidak ditemukan' });
+            res.status(404).json({ error: 'Pengiriman tidak ditemukan' });
+            return;
         }
 
         if (delivery.driverId !== req.user!.id) {
-            return res.status(403).json({ error: 'Anda tidak berhak mengupdate pengiriman ini' });
+            res.status(403).json({ error: 'Anda tidak berhak mengupdate pengiriman ini' });
+            return;
         }
 
         const validStatuses = ['PENDING', 'PICKED_UP', 'ON_THE_WAY', 'DELIVERED'];
         if (!validStatuses.includes(status)) {
-            return res.status(400).json({ error: 'Status tidak valid' });
+            res.status(400).json({ error: 'Status tidak valid' });
+            return;
         }
 
         const updateData: any = { status, notes };
@@ -111,7 +114,7 @@ export const updateDeliveryStatus = async (req: AuthRequest, res: Response) => {
 };
 
 // Complete delivery (Driver marks as complete / User confirms)
-export const completeDelivery = async (req: AuthRequest, res: Response) => {
+export const completeDelivery: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -121,11 +124,13 @@ export const completeDelivery = async (req: AuthRequest, res: Response) => {
         });
 
         if (!delivery) {
-            return res.status(404).json({ error: 'Pengiriman tidak ditemukan' });
+            res.status(404).json({ error: 'Pengiriman tidak ditemukan' });
+            return;
         }
 
         if (delivery.status !== 'DELIVERED') {
-            return res.status(400).json({ error: 'Pengiriman belum sampai' });
+            res.status(400).json({ error: 'Pengiriman belum sampai' });
+            return;
         }
 
         // Update transaction to completed
@@ -142,7 +147,7 @@ export const completeDelivery = async (req: AuthRequest, res: Response) => {
 };
 
 // Get drivers list (for assignment)
-export const getDrivers = async (req: AuthRequest, res: Response) => {
+export const getDrivers: RequestHandler = async (req, res) => {
     try {
         const drivers = await prisma.user.findMany({
             where: { role: 'DRIVER' },

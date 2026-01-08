@@ -1,6 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
+import '../types/express';
 
 const prisma = new PrismaClient();
 
@@ -13,16 +14,17 @@ export interface AuthRequest extends Request {
     };
 }
 
-export const authenticateToken = async (
-    req: AuthRequest,
+export const authenticateToken: RequestHandler = async (
+    req: Request,
     res: Response,
     next: NextFunction
-) => {
+): Promise<void> => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
-        return res.status(401).json({ error: 'Access token required' });
+        res.status(401).json({ error: 'Access token required' });
+        return;
     }
 
     try {
@@ -38,24 +40,28 @@ export const authenticateToken = async (
         });
 
         if (!user) {
-            return res.status(401).json({ error: 'User not found' });
+            res.status(401).json({ error: 'User not found' });
+            return;
         }
 
         req.user = user;
         next();
     } catch (error) {
-        return res.status(403).json({ error: 'Invalid or expired token' });
+        res.status(403).json({ error: 'Invalid or expired token' });
+        return;
     }
 };
 
-export const requireRole = (...roles: string[]) => {
-    return (req: AuthRequest, res: Response, next: NextFunction) => {
+export const requireRole = (...roles: string[]): RequestHandler => {
+    return (req: Request, res: Response, next: NextFunction): void => {
         if (!req.user) {
-            return res.status(401).json({ error: 'Authentication required' });
+            res.status(401).json({ error: 'Authentication required' });
+            return;
         }
 
         if (!roles.includes(req.user.role)) {
-            return res.status(403).json({ error: 'Access denied. Insufficient permissions.' });
+            res.status(403).json({ error: 'Access denied. Insufficient permissions.' });
+            return;
         }
 
         next();

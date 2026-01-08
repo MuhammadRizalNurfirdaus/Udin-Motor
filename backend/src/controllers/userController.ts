@@ -1,11 +1,11 @@
-import { Response } from 'express';
+import { RequestHandler } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { AuthRequest } from '../middleware/authMiddleware';
+import '../types/express';
 
 const prisma = new PrismaClient();
 
 // Get all users (Owner only)
-export const getAllUsers = async (req: AuthRequest, res: Response) => {
+export const getAllUsers: RequestHandler = async (req, res) => {
     try {
         const users = await prisma.user.findMany({
             where: { role: 'USER' },
@@ -29,7 +29,7 @@ export const getAllUsers = async (req: AuthRequest, res: Response) => {
 };
 
 // Get dashboard stats (Owner)
-export const getDashboardStats = async (req: AuthRequest, res: Response) => {
+export const getDashboardStats: RequestHandler = async (req, res) => {
     try {
         const totalUsers = await prisma.user.count({ where: { role: 'USER' } });
         const totalCashiers = await prisma.user.count({ where: { role: 'CASHIER' } });
@@ -64,7 +64,7 @@ export const getDashboardStats = async (req: AuthRequest, res: Response) => {
 };
 
 // Get financial reports (Owner)
-export const getFinancialReports = async (req: AuthRequest, res: Response) => {
+export const getFinancialReports: RequestHandler = async (req, res) => {
     try {
         const now = new Date();
         const currentYear = now.getFullYear();

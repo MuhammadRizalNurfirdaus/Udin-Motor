@@ -1,26 +1,29 @@
-import { Response } from 'express';
+import { RequestHandler } from 'express';
 import bcrypt from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
-import { AuthRequest } from '../middleware/authMiddleware';
+import '../types/express';
 
 const prisma = new PrismaClient();
 
 // Register staff (Cashier or Driver) - Owner only
-export const registerStaff = async (req: AuthRequest, res: Response) => {
+export const registerStaff: RequestHandler = async (req, res) => {
     try {
         const { email, password, name, phone, role } = req.body;
 
         if (!email || !password || !name || !role) {
-            return res.status(400).json({ error: 'Email, password, nama, dan role wajib diisi' });
+            res.status(400).json({ error: 'Email, password, nama, dan role wajib diisi' });
+            return;
         }
 
         if (!['CASHIER', 'DRIVER'].includes(role)) {
-            return res.status(400).json({ error: 'Role harus CASHIER atau DRIVER' });
+            res.status(400).json({ error: 'Role harus CASHIER atau DRIVER' });
+            return;
         }
 
         const existingUser = await prisma.user.findUnique({ where: { email } });
         if (existingUser) {
-            return res.status(400).json({ error: 'Email sudah terdaftar' });
+            res.status(400).json({ error: 'Email sudah terdaftar' });
+            return;
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -52,7 +55,7 @@ export const registerStaff = async (req: AuthRequest, res: Response) => {
 };
 
 // Get all staff (Owner only)
-export const getAllStaff = async (req: AuthRequest, res: Response) => {
+export const getAllStaff: RequestHandler = async (req, res) => {
     try {
         const { role } = req.query;
 
@@ -82,18 +85,20 @@ export const getAllStaff = async (req: AuthRequest, res: Response) => {
 };
 
 // Delete staff (Owner only)
-export const deleteStaff = async (req: AuthRequest, res: Response) => {
+export const deleteStaff: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
 
         const user = await prisma.user.findUnique({ where: { id } });
 
         if (!user) {
-            return res.status(404).json({ error: 'Staff tidak ditemukan' });
+            res.status(404).json({ error: 'Staff tidak ditemukan' });
+            return;
         }
 
         if (!['CASHIER', 'DRIVER'].includes(user.role)) {
-            return res.status(400).json({ error: 'Hanya bisa menghapus kasir atau supir' });
+            res.status(400).json({ error: 'Hanya bisa menghapus kasir atau supir' });
+            return;
         }
 
         await prisma.user.delete({ where: { id } });

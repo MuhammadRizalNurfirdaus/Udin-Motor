@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
+import { Request, Response, RequestHandler } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
-import { AuthRequest } from '../middleware/authMiddleware';
+import '../types/express';
 
 const prisma = new PrismaClient();
 
@@ -117,7 +117,7 @@ export const googleCallback = async (req: Request, res: Response) => {
     }
 };
 
-export const getMe = async (req: AuthRequest, res: Response) => {
+export const getMe: RequestHandler = async (req, res) => {
     try {
         const user = await prisma.user.findUnique({
             where: { id: req.user!.id },
@@ -133,7 +133,8 @@ export const getMe = async (req: AuthRequest, res: Response) => {
         });
 
         if (!user) {
-            return res.status(404).json({ error: 'User tidak ditemukan' });
+            res.status(404).json({ error: 'User tidak ditemukan' });
+            return;
         }
 
         res.json(user);
@@ -143,7 +144,7 @@ export const getMe = async (req: AuthRequest, res: Response) => {
     }
 };
 
-export const updateProfile = async (req: AuthRequest, res: Response) => {
+export const updateProfile: RequestHandler = async (req, res) => {
     try {
         const { name, phone, address } = req.body;
 
