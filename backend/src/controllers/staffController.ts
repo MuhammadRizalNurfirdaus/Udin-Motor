@@ -1,7 +1,6 @@
 import { RequestHandler } from 'express';
 import bcrypt from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
-import '../types/express';
 
 const prisma = new PrismaClient();
 

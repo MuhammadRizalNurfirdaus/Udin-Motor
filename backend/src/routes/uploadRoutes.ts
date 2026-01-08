@@ -2,7 +2,6 @@ import { Router, Request, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
 import { authenticateToken, requireRole } from '../middleware/authMiddleware';
-import '../types/express';
 
 const router = Router();
 
