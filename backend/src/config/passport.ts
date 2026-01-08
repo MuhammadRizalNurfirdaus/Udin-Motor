@@ -42,12 +42,15 @@ passport.use(new GoogleStrategy(
     },
     async (accessToken, refreshToken, profile, done) => {
         try {
+            console.log('Google OAuth callback received for:', profile.displayName);
             const email = profile.emails?.[0]?.value;
 
             if (!email) {
+                console.error('No email from Google profile');
                 return done(new Error('Email not provided by Google'));
             }
 
+            console.log('Looking up user with googleId:', profile.id, 'or email:', email);
             let user = await prisma.user.findUnique({ where: { googleId: profile.id } });
 
             if (!user) {
@@ -55,12 +58,14 @@ passport.use(new GoogleStrategy(
 
                 if (user) {
                     // Link existing account with Google
+                    console.log('Linking existing user to Google:', user.email);
                     user = await prisma.user.update({
                         where: { id: user.id },
                         data: { googleId: profile.id }
                     });
                 } else {
                     // Create new user
+                    console.log('Creating new user:', email);
                     user = await prisma.user.create({
                         data: {
                             email,
@@ -72,8 +77,10 @@ passport.use(new GoogleStrategy(
                 }
             }
 
+            console.log('Google auth successful for user:', user.email, 'role:', user.role);
             return done(null, user);
         } catch (error) {
+            console.error('Google OAuth error:', error);
             return done(error as Error);
         }
     }

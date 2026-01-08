@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { API_BASE_URL } from '../../services/api';
 
 export default function AuthCallback() {
     const [searchParams] = useSearchParams();
@@ -19,27 +20,29 @@ export default function AuthCallback() {
             localStorage.setItem('token', token);
 
             // Fetch user data and redirect
-            fetch('http://localhost:4000/api/auth/me', {
+            fetch(`${API_BASE_URL}/api/auth/me`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
                 .then(res => res.json())
                 .then(user => {
                     localStorage.setItem('user', JSON.stringify(user));
 
-                    // Redirect based on role
+                    // Use window.location to force full page reload so AuthContext picks up the new token
+                    let redirectPath = '/';
                     switch (role || user.role) {
                         case 'OWNER':
-                            navigate('/owner');
+                            redirectPath = '/owner';
                             break;
                         case 'CASHIER':
-                            navigate('/cashier');
+                            redirectPath = '/cashier';
                             break;
                         case 'DRIVER':
-                            navigate('/driver');
+                            redirectPath = '/driver';
                             break;
                         default:
-                            navigate('/');
+                            redirectPath = '/';
                     }
+                    window.location.href = redirectPath;
                 })
                 .catch(() => {
                     navigate('/login?error=auth_failed');
