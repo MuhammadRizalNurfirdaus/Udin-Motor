@@ -12,12 +12,6 @@
 
 ---
 
-## 🌐 Live Demo
-
-**🔗 Akses Aplikasi:** [https://rizalnurfirdaus.tech/](https://rizalnurfirdaus.tech/)
-
----
-
 ## 📝 Deskripsi
 
 **Udin Motor** adalah aplikasi web penjualan motor berbasis TypeScript yang dibangun dengan arsitektur full-stack modern. Aplikasi ini mendukung multi-role dengan 4 jenis pengguna yang berbeda.
@@ -180,7 +174,7 @@ npm start      # Gunakan PM2 untuk production: pm2 start src/index.ts --interpre
 Backend secara otomatis akan menyajikan file frontend dari folder `frontend/dist`.
 
 ### 5. Akses Aplikasi
-- **Domain**: https://rizalnurfirdaus.tech (sesuai config Nginx)
+- Akses melalui domain yang sudah dikonfigurasi di Nginx
 
 
 ---
@@ -259,7 +253,7 @@ Udin Motor/
 
 ## 📄 Lisensi
 
-Proyek ini dibuat untuk keperluan tugas mata kuliah Rekayasa Perangkat Lunak.
+Proyek ini dilisensikan di bawah [MIT License](LICENSE).
 
 ---
 
