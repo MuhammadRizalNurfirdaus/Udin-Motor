@@ -12,9 +12,9 @@
 
 ---
 
-## ⚠️ Status: Dalam Tahap Pengembangan
+## 🌐 Live Demo
 
-Proyek ini masih dalam tahap pengembangan aktif. Beberapa fitur mungkin belum sepenuhnya berfungsi atau masih dalam proses penyempurnaan.
+**🔗 Akses Aplikasi:** [https://rizalnurfirdaus.tech/](https://rizalnurfirdaus.tech/)
 
 ---
 
@@ -271,4 +271,4 @@ Universitas Kuningan
 
 ---
 
-*Terakhir diperbarui: 7 Januari 2026*
+*Terakhir diperbarui: 20 Januari 2026*

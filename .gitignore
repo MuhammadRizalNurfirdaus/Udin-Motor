@@ -8,13 +8,35 @@ dist/
 build/
 *.js.map
 
-# Environment files (SENSITIVE!)
+# ==========================================
+# 🔐 PRIVATE/SENSITIVE FILES - DO NOT COMMIT
+# ==========================================
+
+# Environment files (contains secrets, API keys, database credentials)
 .env
+.env.*
 .env.local
+.env.development
 .env.development.local
 .env.test.local
+.env.production
 .env.production.local
-.env*.local
+*.env
+backend/.env
+frontend/.env
+
+# Secret keys and certificates
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets/
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
 
 # IDE
 .idea/
@@ -48,4 +70,15 @@ backend/uploads/*
 
 # Misc
 .cache/
+tmp/
+temp/
+
+# ==========================================
+# 🔒 SECURITY NOTES
+# ==========================================
+# Pastikan file-file berikut TIDAK pernah di-commit:
+# - .env (database URL, JWT secret, Google OAuth credentials)
+# - File kredensial (.pem, .key)
+# - File konfigurasi server dengan password
+# ==========================================
 *.tsbuildinfo
