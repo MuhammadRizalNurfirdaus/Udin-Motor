@@ -253,7 +253,7 @@ Udin Motor/
 
 ## 📄 Lisensi
 
-Proyek ini dilisensikan di bawah [MIT License](LICENSE).
+Proyek ini dibuat untuk keperluan tugas mata kuliah Rekayasa Perangkat Lunak.
 
 ---
 
