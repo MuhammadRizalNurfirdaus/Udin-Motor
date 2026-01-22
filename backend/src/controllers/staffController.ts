@@ -44,7 +44,14 @@ export const registerStaff: RequestHandler = async (req, res) => {
                 email: user.email,
                 name: user.name,
                 role: user.role,
-                phone: user.phone
+                phone: user.phone,
+                address: user.address,
+                profileImage: user.profileImage,
+                province: user.province,
+                city: user.city,
+                district: user.district,
+                village: user.village,
+                postalCode: user.postalCode
             }
         });
     } catch (error) {
