@@ -107,6 +107,7 @@ export default function HomePage() {
                                 key={motor.id}
                                 motor={motor}
                                 showActions={false}
+                                clickable={true}
                             />
                         ))}
                     </div>

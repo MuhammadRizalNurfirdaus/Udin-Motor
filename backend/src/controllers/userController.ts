@@ -1,7 +1,35 @@
 import { RequestHandler } from 'express';
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import multer from 'multer';
+import path from 'path';
 
 const prisma = new PrismaClient();
+
+// Multer config for profile images
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/profiles');
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'profile-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+export const uploadProfile = multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = /jpeg|jpg|png|gif|webp/;
+        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = allowedTypes.test(file.mimetype);
+        if (mimetype && extname) {
+            return cb(null, true);
+        }
+        cb(new Error('Only image files are allowed'));
+    }
+});
 
 // Get all users (Owner only)
 export const getAllUsers: RequestHandler = async (req, res) => {
@@ -23,6 +51,152 @@ export const getAllUsers: RequestHandler = async (req, res) => {
         res.json(users);
     } catch (error) {
         console.error('Get users error:', error);
+        res.status(500).json({ error: 'Terjadi kesalahan' });
+    }
+};
+
+// Get current user profile
+export const getProfile: RequestHandler = async (req, res) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: req.user!.id },
+            select: {
+                id: true,
+                email: true,
+                name: true,
+                phone: true,
+                address: true,
+                profileImage: true,
+                province: true,
+                city: true,
+                district: true,
+                village: true,
+                postalCode: true,
+                googleId: true,
+                createdAt: true
+            }
+        });
+
+        if (!user) {
+            res.status(404).json({ error: 'User tidak ditemukan' });
+            return;
+        }
+
+        res.json(user);
+    } catch (error) {
+        console.error('Get profile error:', error);
+        res.status(500).json({ error: 'Terjadi kesalahan' });
+    }
+};
+
+// Update user profile
+export const updateProfile: RequestHandler = async (req, res) => {
+    try {
+        const {
+            name,
+            phone,
+            address,
+            province,
+            city,
+            district,
+            village,
+            postalCode,
+            currentPassword,
+            newPassword
+        } = req.body;
+
+        const userId = req.user!.id;
+
+        // Get current user
+        const currentUser = await prisma.user.findUnique({
+            where: { id: userId }
+        });
+
+        if (!currentUser) {
+            res.status(404).json({ error: 'User tidak ditemukan' });
+            return;
+        }
+
+        // Prepare update data
+        const updateData: any = {
+            name,
+            phone,
+            address,
+            province,
+            city,
+            district,
+            village,
+            postalCode
+        };
+
+        // Handle password change
+        if (newPassword) {
+            // If user has a password (not Google-only), verify current password
+            if (currentUser.password && !currentPassword) {
+                res.status(400).json({ error: 'Password lama wajib diisi' });
+                return;
+            }
+
+            if (currentUser.password) {
+                const isValidPassword = await bcrypt.compare(currentPassword, currentUser.password);
+                if (!isValidPassword) {
+                    res.status(400).json({ error: 'Password lama tidak sesuai' });
+                    return;
+                }
+            }
+
+            // Hash new password
+            updateData.password = await bcrypt.hash(newPassword, 10);
+        }
+
+        const user = await prisma.user.update({
+            where: { id: userId },
+            data: updateData,
+            select: {
+                id: true,
+                email: true,
+                name: true,
+                phone: true,
+                address: true,
+                profileImage: true,
+                province: true,
+                city: true,
+                district: true,
+                village: true,
+                postalCode: true,
+                createdAt: true
+            }
+        });
+
+        res.json({ message: 'Profil berhasil diperbarui', user });
+    } catch (error) {
+        console.error('Update profile error:', error);
+        res.status(500).json({ error: 'Terjadi kesalahan' });
+    }
+};
+
+// Upload profile image
+export const uploadProfileImage: RequestHandler = async (req, res) => {
+    try {
+        if (!req.file) {
+            res.status(400).json({ error: 'File gambar wajib diupload' });
+            return;
+        }
+
+        const imageUrl = `/uploads/profiles/${req.file.filename}`;
+
+        const user = await prisma.user.update({
+            where: { id: req.user!.id },
+            data: { profileImage: imageUrl },
+            select: {
+                id: true,
+                profileImage: true
+            }
+        });
+
+        res.json({ message: 'Foto profil berhasil diupload', profileImage: user.profileImage });
+    } catch (error) {
+        console.error('Upload profile image error:', error);
         res.status(500).json({ error: 'Terjadi kesalahan' });
     }
 };
@@ -195,3 +369,7 @@ export const getFinancialReports: RequestHandler = async (req, res) => {
         res.status(500).json({ error: 'Terjadi kesalahan' });
     }
 };
+
+
+// Get monthly sales data for the current year
+

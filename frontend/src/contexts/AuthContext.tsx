@@ -8,6 +8,12 @@ interface User {
     role: 'OWNER' | 'CASHIER' | 'DRIVER' | 'USER';
     phone?: string;
     address?: string;
+    profileImage?: string;
+    province?: string;
+    city?: string;
+    district?: string;
+    village?: string;
+    postalCode?: string;
 }
 
 interface AuthContextType {

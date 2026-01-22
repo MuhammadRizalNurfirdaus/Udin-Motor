@@ -33,6 +33,15 @@ model User {
   googleId      String?   @unique
   phone         String?
   address       String?
+  
+  // Profile details
+  profileImage  String?
+  province      String?
+  city          String?
+  district      String?
+  village       String?
+  postalCode    String?
+  
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -66,6 +75,23 @@ model Transaction {
   totalPrice    Float
   status        TransactionStatus @default(PENDING)
   paymentMethod String?
+  
+  // Shipping Details
+  shippingAddress String?
+  shippingProvince String?
+  shippingCity    String?
+  shippingDistrict String?
+  shippingVillage String?
+  shippingPostalCode String?
+  shippingPhone   String?
+  latitude        Float?
+  longitude       Float?
+  
+  // Payment Details (for bank transfer)
+  virtualAccount  String?
+  paymentProof    String?
+  paidAt          DateTime?
+  
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

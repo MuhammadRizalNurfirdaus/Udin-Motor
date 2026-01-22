@@ -83,8 +83,20 @@ export const staffAPI = {
 
 // Transaction API
 export const transactionAPI = {
-    create: (data: { motorId: string; quantity?: number; paymentMethod?: string; address?: string }) =>
-        api.post('/transactions', data),
+    create: (data: {
+        motorId: string;
+        quantity?: number;
+        paymentMethod?: string;
+        shippingAddress?: string;
+        shippingProvince?: string;
+        shippingCity?: string;
+        shippingDistrict?: string;
+        shippingVillage?: string;
+        shippingPostalCode?: string;
+        shippingPhone?: string;
+        latitude?: number | null;
+        longitude?: number | null;
+    }) => api.post('/transactions', data),
 
     getMy: () => api.get('/transactions/my'),
 
@@ -122,6 +134,18 @@ export const userAPI = {
     getDashboard: () => api.get('/users/dashboard'),
 
     getReports: () => api.get('/users/reports'),
+
+    getProfile: () => api.get('/users/profile'),
+
+    updateProfile: (data: any) => api.put('/users/profile', data),
+
+    uploadProfileImage: (file: File) => {
+        const formData = new FormData();
+        formData.append('image', file);
+        return api.post('/users/profile/image', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+    }
 };
 
 // Upload API

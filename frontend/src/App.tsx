@@ -11,8 +11,10 @@ import AuthCallback from './pages/auth/AuthCallback';
 import HomePage from './pages/user/HomePage';
 import MotorListPage from './pages/user/MotorListPage';
 import MyOrders from './pages/user/MyOrders';
+import ProfilePage from './pages/user/ProfilePage';
 
 // Owner Pages
+
 import OwnerDashboard from './pages/owner/Dashboard';
 import MotorManagement from './pages/owner/MotorManagement';
 import StaffManagement from './pages/owner/StaffManagement';
@@ -62,10 +64,18 @@ function ProtectedRoute({ children, roles }: { children: React.ReactNode; roles?
 
 // Layout with Navbar
 function Layout({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
+  const isStaffRole = user?.role === 'OWNER' || user?.role === 'CASHIER' || user?.role === 'DRIVER';
+
   return (
     <div className="app-container">
       <Navbar />
-      <main className="main-content">{children}</main>
+      <main
+        className="main-content"
+        style={isStaffRole ? { marginLeft: '250px' } : undefined}
+      >
+        {children}
+      </main>
     </div>
   );
 }
@@ -89,7 +99,17 @@ function AppRoutes() {
                 <HomePage />}
         </Layout>
       } />
+
+      {/* Home route for staff to view user website */}
+      <Route path="/home" element={<Layout><HomePage /></Layout>} />
+
       <Route path="/motors" element={<Layout><MotorListPage /></Layout>} />
+
+      <Route path="/profile" element={
+        <ProtectedRoute>
+          <Layout><ProfilePage /></Layout>
+        </ProtectedRoute>
+      } />
 
       {/* User Routes */}
       <Route path="/orders" element={
