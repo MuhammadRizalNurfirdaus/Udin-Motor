@@ -265,4 +265,12 @@ Universitas Kuningan
 
 ---
 
-*Terakhir diperbarui: 20 Januari 2026*
+## 🔄 Riwayat Pembaruan (Terbaru)
+- **Perbaikan Display Revenue**: Memperbaiki format mata uang Rupiah pada dashboard owner.
+- **Perbaikan Profil Pengguna**: Memperbaiki bug data kosong pada halaman profil untuk semua role (User, Owner, Kasir, Supir).
+- **Optimasi Deployment**: Implementasi metode build lokal untuk meringankan beban kinerja server.
+- **Konsistensi Data**: Mengupdate controller backend untuk memastikan sinkronisasi data pengguna antara sesi login dan database.
+
+---
+
+*Terakhir diperbarui: 22 Januari 2026*
