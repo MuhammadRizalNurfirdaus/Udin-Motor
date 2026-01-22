@@ -58,15 +58,15 @@ const ProfilePage = () => {
             const data = response.data;
 
             setFormData({
-                name: data.name || '',
-                phone: data.phone || '',
-                email: data.email || '',
-                address: data.address || '',
-                province: data.province || '',
-                city: data.city || '',
-                district: data.district || '',
-                village: data.village || '',
-                postalCode: data.postalCode || '',
+                name: data.name || authUser?.name || '',
+                phone: data.phone || authUser?.phone || '',
+                email: data.email || authUser?.email || '',
+                address: data.address || authUser?.address || '',
+                province: data.province || authUser?.province || '',
+                city: data.city || authUser?.city || '',
+                district: data.district || authUser?.district || '',
+                village: data.village || authUser?.village || '',
+                postalCode: data.postalCode || authUser?.postalCode || '',
             });
 
             // Pre-load cascading data if values exist
