@@ -15,15 +15,15 @@ const ProfilePage = () => {
 
     // Profile State
     const [formData, setFormData] = useState({
-        name: '',
-        phone: '',
-        email: '',
-        address: '', // Full address text
-        province: '',
-        city: '',
-        district: '',
-        village: '',
-        postalCode: '',
+        name: authUser?.name || '',
+        phone: authUser?.phone || '',
+        email: authUser?.email || '',
+        address: authUser?.address || '',
+        province: authUser?.province || '',
+        city: authUser?.city || '',
+        district: authUser?.district || '',
+        village: authUser?.village || '',
+        postalCode: authUser?.postalCode || '',
     });
 
     // Password State
@@ -40,9 +40,16 @@ const ProfilePage = () => {
     const [villages, setVillages] = useState<{ name: string, postalCode: string }[]>([]);
 
     useEffect(() => {
-        loadProfile();
+        if (authUser) {
+            loadProfile();
+            setFormData(prev => ({
+                ...prev,
+                name: authUser.name || prev.name,
+                email: authUser.email || prev.email,
+            }));
+        }
         setProvinces(getProvinces());
-    }, []);
+    }, [authUser]);
 
     const loadProfile = async () => {
         setLoading(true);

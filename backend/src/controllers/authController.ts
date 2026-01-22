@@ -47,7 +47,15 @@ export const register = async (req: Request, res: Response) => {
                 id: user.id,
                 email: user.email,
                 name: user.name,
-                role: user.role
+                role: user.role,
+                phone: user.phone,
+                address: user.address,
+                profileImage: user.profileImage,
+                province: user.province,
+                city: user.city,
+                district: user.district,
+                village: user.village,
+                postalCode: user.postalCode
             },
             token
         });
@@ -88,7 +96,15 @@ export const login = async (req: Request, res: Response) => {
                 id: user.id,
                 email: user.email,
                 name: user.name,
-                role: user.role
+                role: user.role,
+                phone: user.phone,
+                address: user.address,
+                profileImage: user.profileImage,
+                province: user.province,
+                city: user.city,
+                district: user.district,
+                village: user.village,
+                postalCode: user.postalCode
             },
             token
         });
@@ -127,6 +143,12 @@ export const getMe: RequestHandler = async (req, res) => {
                 role: true,
                 phone: true,
                 address: true,
+                profileImage: true,
+                province: true,
+                city: true,
+                district: true,
+                village: true,
+                postalCode: true,
                 createdAt: true
             }
         });
