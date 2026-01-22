@@ -570,9 +570,12 @@ textarea {
 }
 
 .stat-value {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 5px;
+  word-break: break-all;
+  /* Prevent overflow for very long numbers */
+  line-height: 1.2;
 }
 
 .stat-label {
