@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { userAPI } from '../../services/api';
+import { userAPI, API_BASE_URL } from '../../services/api';
 import { getProvinces, getCities, getDistricts, getVillages, getPostalCode } from '../../data/locationData';
 
 const ProfilePage = () => {
@@ -41,6 +41,7 @@ const ProfilePage = () => {
 
     useEffect(() => {
         if (authUser) {
+            setError(''); // Clear any previous errors
             loadProfile();
             setFormData(prev => ({
                 ...prev,
@@ -53,6 +54,7 @@ const ProfilePage = () => {
 
     const loadProfile = async () => {
         setLoading(true);
+        setError('');
         try {
             const response = await userAPI.getProfile();
             const data = response.data;
@@ -245,7 +247,7 @@ const ProfilePage = () => {
                         <div className="card-body" style={{ textAlign: 'center' }}>
                             <div className="profile-avatar-container">
                                 <img
-                                    src={authUser?.profileImage ? `http://localhost:4115${authUser.profileImage}` : `https://ui-avatars.com/api/?name=${formData.name}&background=random`}
+                                    src={authUser?.profileImage ? `${API_BASE_URL}${authUser.profileImage}` : `https://ui-avatars.com/api/?name=${formData.name}&background=random`}
                                     alt="Profile"
                                     className="profile-avatar"
                                 />
