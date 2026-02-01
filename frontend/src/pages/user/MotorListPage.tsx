@@ -269,9 +269,9 @@ export default function MotorListPage() {
 
     // Store location
     const storeLocation = {
-        address: "Jl. Kroya-Sidaraja, Sidaraja, Kec. Ciawigebang, Kabupaten Kuningan, Jawa Barat 45591",
+        address: "2H8C+QV8, Jl. Kroya-Sidaraja, Sidaraja, Kec. Ciawigebang, Kabupaten Kuningan, Jawa Barat 45591",
         plusCode: "2H8C+QV8",
-        mapsUrl: "https://maps.google.com/?q=-6.9537,108.4753"
+        mapsUrl: "https://maps.app.goo.gl/4muLh5SSb5SjZZnZ7"
     };
 
     if (isLoading) {
